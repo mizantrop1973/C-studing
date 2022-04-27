@@ -6,7 +6,7 @@ int main()
 	setlocale(LC_ALL, "Russian");
 	printf
 	(
-		"Здравствуй, мир!\n"
+		"Р—РґСЂР°РІСЃС‚РІСѓР№, РјРёСЂ!\n"
 	);
 	return 0;
 }
