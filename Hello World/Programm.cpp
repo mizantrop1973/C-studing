@@ -2,14 +2,28 @@
 #include <locale.h>
 #include <math.h> 
 
+const double g = 9.81;
+double height (double t);
+
+
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	int n = 20;
-	int k = 1;
-	for (k=1; k<=20; k=k+1)
+	double t = 0.05;
+	double dt = 0.05;
+	while (t <= 1.0001)
 	{
-		printf("%d  %d\n", k, k * k);
+		double h = height(t);
+		printf(
+			"t=%.2lf sec\th=%.1lf cm\n", t, h * 100.
+		);
+		t += dt;
+
 	}
+	
 	return 0;
+}
+double height(double t)
+{
+	return (g * t * t / 8.);
 }
