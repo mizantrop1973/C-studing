@@ -1,29 +1,93 @@
 #include <stdio.h>
 #include <locale.h>
 #include <math.h> 
+#include <assert.h>
 
-const double g = 9.81;
-double height (double t);
+
+double f(double);
+double root(double a, double b, double eps);
 
 
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	double t = 0.05;
-	double dt = 0.05;
-	while (t <= 1.0001)
-	{
-		double h = height(t);
-		printf(
-			"t=%.2lf sec\th=%.1lf cm\n", t, h * 100.
-		);
-		t += dt;
-
-	}
-	
+	double x = root (1., 2., 0.000001);
+	printf("x=%lf\n", x);
 	return 0;
 }
-double height(double t)
+
+double f(double x)
 {
-	return (g * t * t / 8.);
+	return x * x * x - x - 1.;
 }
+
+double root (double a, double b, double eps)
+{
+	double fa = f(a);
+	double fb = f(b);
+
+	int sa, sb; // знак функции
+
+	if (fa > 0.)
+	{
+		sa = 1;
+	}
+
+	else if (fa < 0)
+	{
+		sa = -1;
+	}
+	else
+	{
+		return a;
+	}
+
+	if (fb > 0.)
+	{
+		sb = 1;
+	}
+
+	else if (fb < 0)
+	{
+		sb = -1;
+	}
+	else
+	{
+		return b;
+	}
+
+	assert(sa * sb <= 0);
+
+	while (fabs(b - a) > eps)
+	{
+		double c = (a + b) / 2.;
+		double fc = f(c);
+		int sc;
+		if (fc > 0.)
+		{
+			sc = 1;
+		}
+
+		else if (fc < 0)
+		{
+			sc = -1;
+		}
+		else
+		{
+			return c;
+		}
+
+		if (sa * sc <= 0)
+		{
+			b = c;
+			sb = sc;
+		}
+		else
+		{
+			a = c;
+			sa = sc;
+		}
+	}
+	return (a + b) / 2.;
+}
+	
