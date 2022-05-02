@@ -2,52 +2,40 @@
 #include <locale.h>
 #include <math.h> 
 
-//Печать n простых чисел путем провенрки делением 
-// на найденные простые числа
+//Разложение числа неа множители
 
-const int MAX_PRIMES = 100000;
-static int primes[MAX_PRIMES];
-static int numPrimes = 0;
+//Integer factorization
+
 
 int main()
 
 {
 	setlocale(LC_ALL, "Russian");
-	int n, p;
+	int n, d, k;
 	printf("Введите n:\n n=");
 	scanf_s("%d", &n);
-	if (n > MAX_PRIMES)
-		n = MAX_PRIMES;
+	
+	d = 2; k = 0;
 
-	primes[0] = 2;
-	++numPrimes;
-
-	p = 3;
-	while (numPrimes < n)
+	while (d <= n)
 	{
-		bool prime = true;
-		for (int i = 0; prime && i < numPrimes; ++i)
+		if(n%d==0)
 		{
-			int d = primes[i];
-			if (d * d > p)
-				break;
-			else if (p % d == 0)
-				prime = false;
+			printf("%d  ", d);
+			++k;
+			n /= d;
 		}
-		if (prime)
+		else
 		{
-			primes[numPrimes] = p;
-			++numPrimes;
-		}
-		p += 2;
-	}
-
-	for (int i = 0; i < numPrimes; ++i)
-	{
-		printf("%d  ", primes[i]);
-		if (i > 0 && (i + 1) % 10 == 0)
-		{
-			printf("\n");
+			if (d == 2)
+				++d;
+			else
+				d += 2;
 		}
 	}
+	printf("\n");
+	if (k == 1)
+		printf("Простое\n");
+
+	return 0;
 }
