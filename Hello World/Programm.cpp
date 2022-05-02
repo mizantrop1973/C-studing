@@ -1,93 +1,58 @@
 #include <stdio.h>
 #include <locale.h>
 #include <math.h> 
-#include <assert.h>
 
 
-double f(double);
-double root(double a, double b, double eps);
+bool prime(int n);
 
+int main ()
 
-int main()
 {
 	setlocale(LC_ALL, "Russian");
-	double x = root (1., 2., 0.000001);
-	printf("x=%lf\n", x);
+	int n, k, p;
+	printf ("Введите n:\n n=");
+	scanf_s ("%d", &n);
+
+	k = 0;
+	p = 2;
+	printf("%d  ", p);
+	++k; //number of primes
+
+	p = 3;
+	while (k < n)
+	{
+		if (prime(p))
+		{
+			printf("%d  ", p);
+			++k;
+			if (k % 10 == 0)
+				printf("\n");
+		}
+		p += 2;
+	}
+	printf("\n");
+
 	return 0;
 }
 
-double f(double x)
+bool prime(int p)
 {
-	return x * x * x - x - 1.;
+	if (p < 2)
+		return false;     //0, 1 are nor prime
+	else if (p == 2)
+		return true;      // 2 is prime
+	else if (p % 2 == 0)
+		return false;     // p is even
+
+	// p.1 is odd;
+	int d = 3;
+	while (d * d <= p)
+	{
+		if (p % d == 0)
+		{
+			return false;
+		}
+		d += 2;
+	}
+	return true;
 }
-
-double root (double a, double b, double eps)
-{
-	double fa = f(a);
-	double fb = f(b);
-
-	int sa, sb; // знак функции
-
-	if (fa > 0.)
-	{
-		sa = 1;
-	}
-
-	else if (fa < 0)
-	{
-		sa = -1;
-	}
-	else
-	{
-		return a;
-	}
-
-	if (fb > 0.)
-	{
-		sb = 1;
-	}
-
-	else if (fb < 0)
-	{
-		sb = -1;
-	}
-	else
-	{
-		return b;
-	}
-
-	assert(sa * sb <= 0);
-
-	while (fabs(b - a) > eps)
-	{
-		double c = (a + b) / 2.;
-		double fc = f(c);
-		int sc;
-		if (fc > 0.)
-		{
-			sc = 1;
-		}
-
-		else if (fc < 0)
-		{
-			sc = -1;
-		}
-		else
-		{
-			return c;
-		}
-
-		if (sa * sc <= 0)
-		{
-			b = c;
-			sb = sc;
-		}
-		else
-		{
-			a = c;
-			sa = sc;
-		}
-	}
-	return (a + b) / 2.;
-}
-	
