@@ -2,18 +2,18 @@
 #include <locale.h>
 #include <math.h> 
 
-//Разложение числа неа множители
-
-//Integer factorization
+//Разложение числа  F5 неа множители
 
 
 int main()
 
 {
 	setlocale(LC_ALL, "Russian");
-	int n, d, k;
+	long long n, d, k;
 	printf("Введите n:\n n=");
-	scanf_s("%d", &n);
+	scanf_s("%lld", &n);
+	printf("Разложение на множители\n");
+
 	
 	d = 2; k = 0;
 
@@ -21,7 +21,7 @@ int main()
 	{
 		if(n%d==0)
 		{
-			printf("%d  ", d);
+			printf("%lld  ", d);
 			++k;
 			n /= d;
 		}
