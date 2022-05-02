@@ -2,57 +2,52 @@
 #include <locale.h>
 #include <math.h> 
 
+//ѕечать n простых чисел путем провенрки делением 
+// на найденные простые числа
 
-bool prime(int n);
+const int MAX_PRIMES = 100000;
+static int primes[MAX_PRIMES];
+static int numPrimes = 0;
 
-int main ()
+int main()
 
 {
 	setlocale(LC_ALL, "Russian");
-	int n, k, p;
-	printf ("¬ведите n:\n n=");
-	scanf_s ("%d", &n);
+	int n, p;
+	printf("¬ведите n:\n n=");
+	scanf_s("%d", &n);
+	if (n > MAX_PRIMES)
+		n = MAX_PRIMES;
 
-	k = 0;
-	p = 2;
-	printf("%d  ", p);
-	++k; //number of primes
+	primes[0] = 2;
+	++numPrimes;
 
 	p = 3;
-	while (k < n)
+	while (numPrimes < n)
 	{
-		if (prime(p))
+		bool prime = true;
+		for (int i = 0; prime && i < numPrimes; ++i)
 		{
-			printf("%d  ", p);
-			++k;
-			if (k % 10 == 0)
-				printf("\n");
+			int d = primes[i];
+			if (d * d > p)
+				break;
+			else if (p % d == 0)
+				prime = false;
+		}
+		if (prime)
+		{
+			primes[numPrimes] = p;
+			++numPrimes;
 		}
 		p += 2;
 	}
-	printf("\n");
 
-	return 0;
-}
-
-bool prime(int p)
-{
-	if (p < 2)
-		return false;     //0, 1 are nor prime
-	else if (p == 2)
-		return true;      // 2 is prime
-	else if (p % 2 == 0)
-		return false;     // p is even
-
-	// p.1 is odd;
-	int d = 3;
-	while (d * d <= p)
+	for (int i = 0; i < numPrimes; ++i)
 	{
-		if (p % d == 0)
+		printf("%d  ", primes[i]);
+		if (i > 0 && (i + 1) % 10 == 0)
 		{
-			return false;
+			printf("\n");
 		}
-		d += 2;
 	}
-	return true;
 }
