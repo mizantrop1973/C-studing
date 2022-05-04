@@ -2,40 +2,22 @@
 #include <locale.h>
 #include <math.h> 
 
-//Разложение числа  F5 неа множители
+//НОД двух целых чисел
 
 
 int main()
 
 {
-	setlocale(LC_ALL, "Russian");
-	long long n, d, k;
-	printf("Введите n:\n n=");
-	scanf_s("%lld", &n);
-	printf("Разложение на множители\n");
-
-	
-	d = 2; k = 0;
-
-	while (d <= n)
+	int gcd(int m, int n)
 	{
-		if(n%d==0)
+		while (n != 0)
 		{
-			printf("%lld  ", d);
-			++k;
-			n /= d;
+			int r = m % n;
+			m = n; n = r;
 		}
-		else
-		{
-			if (d == 2)
-				++d;
-			else
-				d += 2;
-		}
+		//Утверждение n=0 и НОД (m,n)=НОД(m0,n0)
+		return m;
 	}
-	printf("\n");
-	if (k == 1)
-		printf("Простое\n");
-
+	
 	return 0;
 }
