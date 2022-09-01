@@ -11,7 +11,7 @@ int main()
 	scanf_s("%d", &k);
 	printf("¬ведите конечное число n=");
 	scanf_s("%d", &n);
-	for (k=k; k<=n; k=k+1)
+	for (k=k; k<=n; k++)
 	{
 		printf("%d  %d\n", k, k * k);
 	}
