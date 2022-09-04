@@ -2,9 +2,9 @@
 #include <locale.h>
 #include <math.h> 
 
-//Разложение числа неа множители
+//Разложение числа на множители самостоятельно
 
-//Integer factorization
+//Integer factorization myself
 
 
 int main()
@@ -12,30 +12,32 @@ int main()
 {
 	setlocale(LC_ALL, "Russian");
 	int n, d, k;
-	printf("Введите n:\n n=");
+	printf("Введите n:\n n = ");
 	scanf_s("%d", &n);
-	
-	d = 2; k = 0;
-
-	while (d <= n)
+	d = 2;
+	k = 0;
+	while (n % d == 0)
 	{
-		if(n%d==0)
-		{
-			printf("%d  ", d);
-			++k;
-			n /= d;
-		}
-		else
-		{
-			if (d == 2)
-				++d;
-			else
-				d += 2;
-		}
+		n = n / d;
+		printf("%d  \n", d);
+		++k;
 	}
-	printf("\n");
+	d = 3;
+	for (d = 3; n / d >= 1; d += 2)
+	{
+		while (n % d == 0)
+		{
+			n = n / d;
+			printf("%d  \n", d);
+			++k;
+		}
+
+	}
 	if (k == 1)
-		printf("Простое\n");
+	{
+		printf("n - простое число\n");
+	}
+
 
 	return 0;
 }
