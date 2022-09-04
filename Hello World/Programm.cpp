@@ -45,7 +45,7 @@ int main()
 	for (int i = 0; i < numPrimes; ++i)
 	{
 		printf("%d  ", primes[i]);
-		if (i > 0 && (i + 1) % 10 == 0)
+		if ((i + 1) % 10 == 0)
 		{
 			printf("\n");
 		}
