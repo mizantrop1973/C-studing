@@ -2,52 +2,72 @@
 #include <locale.h>
 #include <math.h> 
 
-//Печать n простых чисел путем провенрки делением 
-// на найденные простые числа
+//Печать n простых чисел МЕТОД Эротосфена (квадратичное решето)
+//Нахождение простых чисел на отрезке 0 - (N-1)
 
-const int MAX_PRIMES = 100000;
-static int primes[MAX_PRIMES];
-static int numPrimes = 0;
+
+
 
 int main()
 
 {
 	setlocale(LC_ALL, "Russian");
-	int n, p;
+	int n, p, i;
+	printf(
+		"РЕШЕТО ЭРОТОСФЕНА. Вычисление всех простых чисел\n"
+		"на отрезке от 0 до N\n"
+	);
 	printf("Введите n:\n n=");
 	scanf_s("%d", &n);
-	if (n > MAX_PRIMES)
-		n = MAX_PRIMES;
+	bool* a = new bool[n + 1];
+	for (i = 0; i <= n; ++i)
+		a[i] = true;
 
-	primes[0] = 2;
-	++numPrimes;
+	a[0] = false;
+	a[1] = false;
+	a[2] = true;
 
-	p = 3;
-	while (numPrimes < n)
+	p = 2;
+	while (p < n)
 	{
-		bool prime = true;
-		for (int i = 0; prime && i < numPrimes; ++i)
+		i = p + p;
+		while (i <= n)
 		{
-			int d = primes[i];
-			if (d * d > p)
-				break;
-			else if (p % d == 0)
-				prime = false;
+			a[i] = false;
+			i += p;
 		}
-		if (prime)
+		++p;
+		while (p <= n && !a[p])
+			++p;
+	}
+
+	int numPrimes = 0;
+	for (i = 0; i <= n; ++i)
+	{
+		if (a[i])
 		{
-			primes[numPrimes] = p;
+			if (numPrimes > 0)
+			{
+				if (numPrimes % 10 == 0)
+				{
+					printf("\n");
+				}
+				else
+				{
+					printf("  ");
+				}
+			}
+			printf("%d", i);
 			++numPrimes;
 		}
-		p += 2;
 	}
 
-	for (int i = 0; i < numPrimes; ++i)
+	if (numPrimes % 10 != 0)
 	{
-		printf("%d  ", primes[i]);
-		if ((i + 1) % 10 == 0)
-		{
-			printf("\n");
-		}
+		printf("\n");
+		printf("Количество простых чисел = %d\n", numPrimes);
 	}
+
+	return 0;
+		
 }
