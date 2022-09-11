@@ -2,7 +2,7 @@
 #include <locale.h>
 #include <math.h> 
 
-double sum(FILE* f);
+double max(FILE* f);
 
 int main()
 
@@ -15,7 +15,7 @@ int main()
 		perror("Не удалось прочесть файл\n");
 		return(-1);
 	}
-	double s = sum(in);
+	double m = max(in);
 	fclose(in);
 
 	fopen_s(&out, "c:/Users/Дмитрий/Documents/output.txt", "w");
@@ -24,19 +24,20 @@ int main()
 		perror("Не удалось прочесть файл\n");
 		return(-1);
 	}
-	fprintf_s(out, "% lf\n", s);
+	fprintf_s(out, "Максимум = % lf\n", m);
 	fclose(out);
 	return 0;
 }
-double sum (FILE* f)
+double max (FILE* f)
 {
-	double s = 0.;
+	double m = -1e+30;
 	double a;
 	while (fscanf_s(f, "%lf", &a) == 1)
 	{
-		s += a;
+		if (a > m)
+		m = a;		
 	}
-	return s;
+	return m;
 	
 }
 
