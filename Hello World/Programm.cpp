@@ -4,44 +4,57 @@
 #include <math.h> 
 #include <cassert>
 
-double squareRoot(double a, double eps);
+double  degree(double a, int n);
 
 int main()
 
 {
 	setlocale(LC_ALL, "Russian");
-	printf(" ВАВИЛОНСКОЕ ВЫЧИСЛЕНИЕ КОРНЯ ЧИСЛА С ЗАДАННОЙ ТОЧНОСТЬЮ");
-	double a, r, eps;
+	printf(" АЛГОРИТМ БЫСТРОГО ВОЗВЕДЕНИЯ В СТЕПЕНЬ (ИНВАРИАНТ)");
+	double  a;
+	int n;
 	while (true)
 	{
-		printf("\n Введите a:  ");
+		printf("\n Введите возводимое в степень число a:  ");
 		scanf("%lf", &a);
-			if(a<0)
-			break;
 
-		printf(" Введите eps:  ");
-		scanf("%lf", &eps);
-				
-		r = squareRoot(a, eps);
-		printf("\n r = %lf\n", r);
-		printf("\n Проверка 1: sqrt(a) = %lf\n", sqrt(a));
-		printf(" Проверка 2: r * r = %lf\n", r * r);
+		printf(" Введите степень n:  ");
+		scanf("%d", &n);
+		if (n < 0)
+			break;
+		double x = degree(a, n);
+		printf("\n x = %lf\n", x);
+		
 		printf("\n НОВЫЙ РАСЧЕТ\n");
 	}
 
 	return 0;
 
 }
-double squareRoot(double a, double eps)
+double degree(double a, int n)
 {
-	assert (a >= 0.); // Добавили инклуд вначале #include <cassert>
-	double x = a;
-	while (fabs(x * x - a) > eps)
+	assert(n >= 0.); // Добавили инклуд вначале #include <cassert>
+	double p = 1;
+	double b = a;
+	int k = n;
+	// утверждение b ^ k  * p = a;
+
+	while (k > 0)
 	{
-		x = (x + a / x) / 2.;
+		if (k % 2 == 0)
+		{
+			k = k / 2;
+			b = b * b;
+		}
+		else
+		{
+			k = k - 1;
+			p = p * b;
+		}
 	}
-	fflush(stdin);
-	return x;
+	
+	//fflush(stdin);
+	return p;
 
 }
 
