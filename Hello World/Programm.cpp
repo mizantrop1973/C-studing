@@ -4,29 +4,31 @@
 #include <math.h> 
 #include <cassert>
 
-//ÍÎÄ ðàñøèðåííûé àëãîðèòì Åâêëèäà ÈÍÂÀÐÈÀÍÒ
+//Ïðèáëèæåííûå ðàñ÷åò ëîãàðèôìà ñ çàäàííîé òî÷íîñòüþ ÈÍÂÀÐÈÀÍÒ
 
-int extgcd(int m, int n, int* u, int* v);
+double log(double a, double y, double eps);
 
 int main()
 
 {
-	int m, n;
+	double a, y, eps;
 	setlocale(LC_ALL, "Russian");
-	printf(" ÐÀÑØÈÐÅÍÍÛÉ ÀËÃÎÐÈÒÌ ÅÂÊËÈÄÀ (ÈÍÂÀÐÈÀÍÒ)\n\n");
+	printf(" ÏÐÈÁËÈÆÅÍÍÛÉ ÐÀÑ×ÅÒ ËÎÃÀÐÈÔÌÀ (ÈÍÂÀÐÈÀÍÒ)\n\n");
 	
 	while (true)
 	{
 		
-		printf("\n Ââåäèòå 2 ÷èñëà m è n : \n");
-		printf("\n m = ");
-		scanf_s("%d", &m);
-		printf("\n n = ");
-		scanf_s("%d", &n);
-		
-		int u, v;
-		int d = extgcd(m, n, &u, &v);
-		printf("\n ÍÎÄ = %d  u = %d  v = %d\n\n\n", d, u, v);
+		printf("\n Ââåäèòå  îñíîâàíèå ëîãîðèôìà à > 1  : ");
+		scanf_s("%lf", &a);
+		printf("\n Ââåäèòå ÷èñëî ëîãàðèôìà y > 0  :  ");
+		scanf_s("%lf", &y);
+		printf("\n Çàäàéòå òî÷íîñòü eps  :  ");
+		scanf_s("%lf", &eps);
+
+		double x = log(a, y, eps);
+		printf("\n ÎÒÂÅÒ :  Ëîãàðèôì ÷èñëà %lf ïî îñíîâàíèþ %lf = %lf  \n", y, a, x);
+
+		printf("\n ÏÐÎÂÅÐÊÀ : a ^ x =  %lf\n\n\n", pow(a, x));
 				
 		printf("\n ÍÎÂÛÉ ÐÀÑ×ÅÒ\n");
 	}
@@ -35,28 +37,42 @@ int main()
 
 }
 
-int extgcd(int m, int n, int* u, int* v)
+double log(double a, double y, double eps)
 {
-	int a = m;
-	int b = n;
-	int u1 = 1; int v1 = 0; 
-	int u2 = 0; int v2 = 1;
-	assert(a == u1 * m + v1 * n && b == u2 * m + v2 * n);
-	//Óòâåðæäåíèå 1 ÍÎÄ(a, b) = ÍÎÄ(m, n);
-    //Óòâåðæäåíèå 2 int a = u1 * m + v1 * n;
-	//Óòâåðæäåíèå 3 int b = u2 * m + v2 * n;
-	while (b != 0)
+	assert(a > 0. && a !=  1.);
+	bool inverse = false;
+	if (a < 1.)
 	{
-		int q = a / b; // â Ñè îïåðàöèÿ ñ öåëûìè ÷èñëàìè ïðèâîäèò ê öåëîé ÷àñòè htpekmnfnf
-		int r = a % b;
-		a = b; b = r;
-		int tmp = u2; u2 = u1 - q * u2;
-		u1 = tmp;
-		tmp = v2;v2 = v1 - q * v2;
-		v1 = tmp;
+		inverse = true;
+		a = 1. / a;
 	}
-	*u = u1; *v = v1;
+	double x = 0;
+	double z = y;
+	double t = 1;
+	assert(pow(a, x) * pow(z, t) == y);
 
-	return a;
+
+	while (z < 1. / a || z > a || fabs(t) > eps)
+	{
+		if (z > a)
+		{
+			z = z / a;
+			x = x + t;
+		}
+		else if (z < 1 / a)
+		{
+			z = z * a;
+			x = x - t;
+		}
+		else
+		{
+			t = t / 2;
+			z = z*z;
+		}
+	}
+	if (inverse)
+		x = (-x);
+
+	return x;
 
 }
