@@ -4,75 +4,95 @@
 #include <math.h> 
 #include <cassert>
 
-//Приближенные расчет логарифма с заданной точностью ИНВАРИАНТ
+//Организация последоватенльного поиска в массиве ИНВАРИАНТ
 
-double log(double a, double y, double eps);
+bool secSearch(double *a, int n, double x, int* idx);
+const int N = 100;
+int n; 
+int* idx;
+double x;
+double a[N];
+const double EPS = 0.0000001;
 
 int main()
 
 {
-	double a, y, eps;
+	
 	setlocale(LC_ALL, "Russian");
-	printf(" ПРИБЛИЖЕННЫЙ РАСЧЕТ ЛОГАРИФМА (ИНВАРИАНТ)\n\n");
+	printf(" Организация последоватенльного поиска в массиве\n\n");
 	
 	while (true)
 	{
+		printf("\n Введите  длину массива n < N = %d :  ", N);
+		scanf_s("%d", &n);
 		
-		printf("\n Введите  основание логорифма а > 1  : ");
-		scanf_s("%lf", &a);
-		printf("\n Введите число логарифма y > 0  :  ");
-		scanf_s("%lf", &y);
-		printf("\n Задайте точность eps  :  ");
-		scanf_s("%lf", &eps);
+		while (n > N || n <= 0)
+		{
+			printf("\n Длина массива менее 1(единицы) или выше допустимого (%d). Попробуйте еще раз\n", N);
+			scanf_s("%d", &n);
+		}
+		printf("\n Введите масcив a длиной %d вещественных чисел (После каждого нажимать ENTER)  :\n", n);
+		int i = 0;
+				for (int i=0; i <= n - 1; i++)
+		{
+			printf(" a[%d] = ", i);
 
-		double x = log(a, y, eps);
-		printf("\n ОТВЕТ :  Логарифм числа %lf по основанию %lf = %lf  \n", y, a, x);
+			scanf_s("%lf", &a[i]);
+		}
 
-		printf("\n ПРОВЕРКА : a ^ x =  %lf\n\n\n", pow(a, x));
+		printf("\n Введен массив  :\n");
+		for (i = 0; i <= n - 1; ++i)
+		{
+			printf(" %lf  ", a[i]); // пробел в формате печати обязателен
+			//getchar(); getchar();
+		}
+		printf("\n Введите элемент поиска x = ");
+		scanf_s("%lf", &x);
+
+		//bool found = secSearch(a,  n,  x, idx);
+		bool found = false;
+
+		for (int i = 0; !found && i <= (n - 1); ++i)
+		{
+			if (fabs(a[i] - x) < EPS && a[i] * x >= 0)
+			{
+				found = true;
+				idx = &i;
+			}
+		}
+
+		if (found)
+		{
+			printf("\n\n Элемент х = %lf найден : Это a[%d]\n\n", x, *idx);
+		}
+		else
+		{
+			printf("\n\n Элемент х = %lf не найден :\n\n", x);
+		}
 				
-		printf("\n НОВЫЙ РАСЧЕТ\n");
+		printf("\n\n НОВЫЙ ПОИСК\n");
 	}
 
 	return 0;
 
 }
 
-double log(double a, double y, double eps)
+
+/*bool secSearch(double* a, int n, double x, int* idx)
 {
-	assert(a > 0. && a !=  1.);
-	bool inverse = false;
-	if (a < 1.)
+	bool found = false;
+	
+	for (int i = 0; !found && i <= (n - 1); ++i)
 	{
-		inverse = true;
-		a = 1. / a;
-	}
-	double x = 0;
-	double z = y;
-	double t = 1;
-	assert(pow(a, x) * pow(z, t) == y);
-
-
-	while (z < 1. / a || z > a || fabs(t) > eps)
-	{
-		if (z > a)
+		if (fabs(a[i] - x) < EPS && a[i] * x >= 0)
 		{
-			z = z / a;
-			x = x + t;
-		}
-		else if (z < 1 / a)
-		{
-			z = z * a;
-			x = x - t;
-		}
-		else
-		{
-			t = t / 2;
-			z = z*z;
+			found = true;
+			idx =&i;
 		}
 	}
-	if (inverse)
-		x = (-x);
 
-	return x;
+	return found;
 
-}
+
+}*/
+
