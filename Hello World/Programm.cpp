@@ -6,10 +6,9 @@
 
 //ќрганизаци€ последоватенльного поиска в массиве »Ќ¬ј–»јЌ“
 
-bool secSearch(double *a, int n, double x, int* idx);
-const int N = 100;
+int secSearch(double *a, int n, double x);
+const int N = 10000;
 int n; 
-int* idx;
 double x;
 double a[N];
 const double EPS = 0.0000001;
@@ -40,17 +39,17 @@ int main()
 			scanf_s("%lf", &a[i]);
 		}
 
-		printf("\n ¬веден массив  :\n");
+		printf("\n ¬веден массив  :");
 		for (i = 0; i <= n - 1; ++i)
 		{
-			printf(" %lf  ", a[i]); // пробел в формате печати об€зателен
+			printf("  %lf  ", a[i]); // пробел в формате печати об€зателен
 			//getchar(); getchar();
 		}
-		printf("\n ¬ведите элемент поиска x = ");
+		printf("\n\n ¬ведите элемент поиска x = ");
 		scanf_s("%lf", &x);
 
-		//bool found = secSearch(a,  n,  x, idx);
-		bool found = false;
+		int f = secSearch(a,  n,  x);// сделал все в функции main, так как с отдельной функцией возникли проблемы чтени€ переменной idx
+		/*		bool found = false;
 
 		for (int i = 0; !found && i <= (n - 1); ++i)
 		{
@@ -59,15 +58,15 @@ int main()
 				found = true;
 				idx = &i;
 			}
-		}
+		}*/
 
-		if (found)
+		if (f >= 0)
 		{
-			printf("\n\n Ёлемент х = %lf найден : Ёто a[%d]\n\n", x, *idx);
+			printf("\n\n ќ“¬≈“: Ёлемент х = %lf найден : Ёто a[%d]\n\n", x, f);
 		}
 		else
 		{
-			printf("\n\n Ёлемент х = %lf не найден :\n\n", x);
+			printf("\n\n ќ“¬≈“: Ёлемент х = %lf не найден. \n\n", x);
 		}
 				
 		printf("\n\n Ќќ¬џ… ѕќ»— \n");
@@ -78,21 +77,19 @@ int main()
 }
 
 
-/*bool secSearch(double* a, int n, double x, int* idx)
+int secSearch(double* a, int n, double x)
 {
-	bool found = false;
+	int idx = -1;
 	
-	for (int i = 0; !found && i <= (n - 1); ++i)
+	for (int i = 0; idx < 0 && i <= (n - 1); ++i)
 	{
 		if (fabs(a[i] - x) < EPS && a[i] * x >= 0)
 		{
-			found = true;
-			idx =&i;
+			idx = i;
 		}
 	}
 
-	return found;
+	return idx;
 
-
-}*/
+}
 
