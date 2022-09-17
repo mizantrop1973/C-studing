@@ -1,98 +1,127 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <stdlib.h>
 #include <locale.h>
 #include <math.h> 
 #include <cassert>
 
-//Организация последоватенльного поиска в массиве ИНВАРИАНТ
+//Организация бинарного поиска в массиве 
+//(элементы распологаются по возрастанию)ИНВАРИАНТ
 
-bool secSearch(double *a, int n, double x, int* idx);
-const int N = 100;
-int n; 
-int* idx;
-double x;
-double a[N];
-const double EPS = 0.0000001;
+bool binSearch(double *a, int n, double x, int* idx);
+int compareDouble(const void* k, const void* l);
 
 int main()
 
 {
-	
 	setlocale(LC_ALL, "Russian");
-	printf(" Организация последоватенльного поиска в массиве\n\n");
+	int n;
+	int idx;
+	double x;
+	double* a = NULL;
+	
+	printf(" Организация бинарного поиска в массиве (упорядочен по возрастанию\n\n");
 	
 	while (true)
 	{
-		printf("\n Введите  длину массива n < N = %d :  ", N);
-		scanf_s("%d", &n);
-		
-		while (n > N || n <= 0)
-		{
-			printf("\n Длина массива менее 1(единицы) или выше допустимого (%d). Попробуйте еще раз\n", N);
-			scanf_s("%d", &n);
-		}
-		printf("\n Введите масcив a длиной %d вещественных чисел (После каждого нажимать ENTER)  :\n", n);
-		int i = 0;
-				for (int i=0; i <= n - 1; i++)
-		{
-			printf(" a[%d] = ", i);
+		printf("\n Введите  длину массива n :  ");
+		if (scanf("%d", &n) < 1 || n <= 0);
+		break;
 
-			scanf_s("%lf", &a[i]);
-		}
-
-		printf("\n Введен массив  :\n");
-		for (i = 0; i <= n - 1; ++i)
-		{
-			printf(" %lf  ", a[i]); // пробел в формате печати обязателен
-			//getchar(); getchar();
-		}
-		printf("\n Введите элемент поиска x = ");
-		scanf_s("%lf", &x);
-
-		//bool found = secSearch(a,  n,  x, idx);
-		bool found = false;
-
-		for (int i = 0; !found && i <= (n - 1); ++i)
-		{
-			if (fabs(a[i] - x) < EPS && a[i] * x >= 0)
-			{
-				found = true;
-				idx = &i;
-			}
-		}
-
-		if (found)
-		{
-			printf("\n\n Элемент х = %lf найден : Это a[%d]\n\n", x, *idx);
-		}
-		else
-		{
-			printf("\n\n Элемент х = %lf не найден :\n\n", x);
-		}
-				
-		printf("\n\n НОВЫЙ ПОИСК\n");
+		// Очищаем и выделяем память под массив
+		delete[] a; 
+		a = new double[n];
+		// формируем массив длинно 100 символов при помощи рандомной генерации
+		for (int i = 0; i < n; ++i)
+			a[i] = (double)(rand() % 100);
 	}
+	//сортируем массив повозрастанию библиотечной функцией
+	qsort(a, n, sizeof(double), &compareDouble);
 
+	printf("\n Имеется массив  :\n");
+		for (int i = 0; i < n; ++i)
+		{
+			printf(" %6.1lf  ", a[i]); // пробел в формате печати обязателен
+			if ((i + 1) % 10 == 0);
+			printf("\n");
+		}
+		
+		 while (true)
+		 {
+			printf("\n Введите элемент поиска x = ");
+			scanf_s("%lf", &x);
+
+			bool found = binSearch(a,  n,  x, &idx);
+		
+
+			if (found)
+			{
+				printf("\n\n Элемент х = %lf найден : Это a[%d]\n\n", x, idx);
+			}
+			else
+			{
+				printf("\n\n Элемент х = %lf не найден \n\n", x);
+			}
+			printf("\n\n НОВЫЙ ПОИСК\n");	
+		 }
+	delete[] a;
 	return 0;
 
 }
 
 
-/*bool secSearch(double* a, int n, double x, int* idx)
+bool binSearch(double* a, int n, double x, int* idx)
 {
 	bool found = false;
-	
-	for (int i = 0; !found && i <= (n - 1); ++i)
+	if (n <= 0 || x <= a[0])
 	{
-		if (fabs(a[i] - x) < EPS && a[i] * x >= 0)
-		{
-			found = true;
-			idx =&i;
-		}
+		*idx = 0;
+		return (n > 0 && x >= a[0]); // (трюк - x = a[0}
 	}
+	else if (x > a[n - 1])
+	{
+		*idx = n;
+		return false;
+	}
+	else
+	{
+		assert(n > 0 && x >= a[0] && x <= a[n - 1]);
+		int beg = 0;
+		int end = n - 1;
+		assert(a[beg] < x && x <= a[end]);
+		while (end - beg > 1)
+		{
+			int c = (end + beg) / 2;
+			assert(beg < c&& c < end);
+			if (a[c] < x)
+			{
+				beg = c;
+			}
+			else if (a[c] > x)
+			{
+				end = c;
+			}
+			else
+			{
+				// assert a[c] == x; - сравнивать вещественные числа некорректно
+				*idx = c;
+				return true;
+			}
+		}
+		assert(a[beg] < x && x <= a[end]);
+		*idx = end;
+		return (x >= a[end]);
+	}
+}
 
-	return found;
-
-
-}*/
-
+int compareDouble(const void* k, const void* l)
+{
+	double r = *((double*) k);
+	double s = *((double*) l);
+	if (r > s)
+		return 1;
+	else if (r < s)
+		return (-1);
+	else
+		return 0;
+}
