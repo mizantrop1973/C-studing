@@ -5,123 +5,102 @@
 #include <math.h> 
 #include <cassert>
 
-//Организация бинарного поиска в массиве 
-//(элементы распологаются по возрастанию)ИНВАРИАНТ
+//Сортировка ИНВАРИАНТ
 
-bool binSearch(double *a, int n, double x, int* idx);
-int compareDouble(const void* k, const void* l);
+void swap(double *x, double *y);
+void bubbleSort(double* a, int n);
+
 
 int main()
-
 {
 	setlocale(LC_ALL, "Russian");
-	int n;
-	int idx;
-	double x;
+	int n, i;
 	double* a = NULL;
-	
-	printf(" Организация бинарного поиска в массиве (упорядочен по возрастанию\n\n");
-	
 	while (true)
 	{
+		printf("\n ПРОГРАММА СОРТИРОВКИ ЭЛЕМЕНТОВ МАССИВА ПО ВОЗРАСТАНИЮ \n\n");
+		
 		printf("\n Введите  длину массива n :  ");
-		if (scanf("%d", &n) < 1 || n <= 0);
-		break;
-
-		// Очищаем и выделяем память под массив
-		delete[] a; 
+		if (scanf("%d", &n) < 1 || n <= 0)
+			break;
+		delete[] a;
 		a = new double[n];
-		// формируем массив длинно 100 символов при помощи рандомной генерации
-		for (int i = 0; i < n; ++i)
-			a[i] = (double)(rand() % 100);
-	}
-	//сортируем массив повозрастанию библиотечной функцией
-	qsort(a, n, sizeof(double), &compareDouble);
 
-	printf("\n Имеется массив  :\n");
-		for (int i = 0; i < n; ++i)
+		for (i = 0; i < n; ++i)
 		{
-			printf(" %6.1lf  ", a[i]); // пробел в формате печати обязателен
-			if ((i + 1) % 10 == 0);
-			printf("\n");
+			a[i] = (double)(rand() % 100);
 		}
-		
-		 while (true)
-		 {
-			printf("\n Введите элемент поиска x = ");
-			scanf_s("%lf", &x);
 
-			bool found = binSearch(a,  n,  x, &idx);
-		
+		printf("\n Имеется массив  :\n");
+		for (i = 0; i < n; ++i)
+		{
+			printf("  %6.1lf  ", a[i]);
+			if ((i + 1) % 10 == 0)
+				printf("\n");
+		}
+		printf("\n=================================\n");
 
-			if (found)
-			{
-				printf("\n\n Элемент х = %lf найден : Это a[%d]\n\n", x, idx);
-			}
-			else
-			{
-				printf("\n\n Элемент х = %lf не найден \n\n", x);
-			}
-			printf("\n\n НОВЫЙ ПОИСК\n");	
-		 }
+		bubbleSort(a, n);
+		printf(" Отсортированный массив :  \n");
+
+		for (i = 0; i < n; ++i)
+		{
+			printf("  %6.1lf  ", a[i]);
+			if ((i + 1) % 10 == 0)
+				printf("\n");
+		}
+		printf("\n=================================\n");
+	}
 	delete[] a;
 	return 0;
 
 }
 
 
-bool binSearch(double* a, int n, double x, int* idx)
+void swap(double* x, double* y) // алгоритм перемены местами членов массива
 {
-	bool found = false;
-	if (n <= 0 || x <= a[0])
+	double tmp = *x;
+	*x = *y;
+	*y = tmp;
+}
+
+
+
+void bubbleSort(double* a, int n) //оптимизация пузырьковой сортировки (наивный)
+{
+	bool inverse = true;
+	int k = 0;   //количество проходов
+	while (inverse)
 	{
-		*idx = 0;
-		return (n > 0 && x >= a[0]); // (трюк - x = a[0}
-	}
-	else if (x > a[n - 1])
-	{
-		*idx = n;
-		return false;
-	}
-	else
-	{
-		assert(n > 0 && x >= a[0] && x <= a[n - 1]);
-		int beg = 0;
-		int end = n - 1;
-		assert(a[beg] < x && x <= a[end]);
-		while (end - beg > 1)
+		inverse = false;
+		for (int i = 0; i <= n - 1 - k; ++i) // каждый проход перемещает максимальный элемент массива в конец, мы его исключаем
 		{
-			int c = (end + beg) / 2;
-			assert(beg < c&& c < end);
-			if (a[c] < x)
+			if (a[i] > a[i + 1]) // количество сравнений в одном проходе n (иногда n+1)
 			{
-				beg = c;
-			}
-			else if (a[c] > x)
-			{
-				end = c;
-			}
-			else
-			{
-				// assert a[c] == x; - сравнивать вещественные числа некорректно
-				*idx = c;
-				return true;
+				swap(&(a[i]), &(a[i + 1]));
+				inverse = true;
 			}
 		}
-		assert(a[beg] < x && x <= a[end]);
-		*idx = end;
-		return (x >= a[end]);
+		++k;  //  количество проходов уменбшается, n = (n * (n-1))/2
 	}
 }
 
-int compareDouble(const void* k, const void* l)
+void directSort(double* a, int n) //прямой выбор (наивный)
 {
-	double r = *((double*) k);
-	double s = *((double*) l);
-	if (r > s)
-		return 1;
-	else if (r < s)
-		return (-1);
-	else
-		return 0;
+	for (int i = 0; i <= n - 1; ++i) 
+	{
+		int m = i;
+		for (int j = i + 1; j < n; ++j)
+			{
+				if (a[j] < a[m])
+				{
+					m = j;
+				}
+			}
+		
+			if (m != i)
+			{
+				swap(&(a[i]), &(a[m]));
+			}
+		}
 }
