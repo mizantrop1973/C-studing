@@ -159,13 +159,13 @@ void quickSort(double* a, int n)// быстрой сортировки
 
 		if (left <= right)
 		{
-			quickSort(a + m + beg, left);
+			quickSort(a + beg, left);
 			beg += left + 1;
 			k -= left + 1;
 		}
 		else // right <= left;
 		{
-			quickSort(a + beg + k, right);
+			quickSort(a + beg + m +1, right);
 			// beg остается прежним
 			k -= right + 1;
 		}
@@ -198,7 +198,7 @@ void partition(double* a, int n, int* m)
 		}
 		if (!changed)
 		{
-			//assert(j - i > 1 && a[i + 1] > x && a[j - 1] < x);
+			assert(j - i > 1 && a[i+1] >= x && a[j-1] <= x);
 			++i, --j;
 			swap(&(a[i]), &(a[j]));
 		}
