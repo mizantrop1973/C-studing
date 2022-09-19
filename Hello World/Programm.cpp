@@ -5,10 +5,12 @@
 #include <math.h> 
 #include <cassert>
 
-//Бинарный поиск с генерацией массива
+//Быстрая соритировка
 
 void swap(double* x, double* y);
 void bubbleSort(double* a, int n);
+void partition(double* a, int n, int* m);
+void quickSort(double* a, int n);
 bool binSearch(double* a, int n, double x, int* idx);
 
 int main()
@@ -41,7 +43,7 @@ int main()
 		}
 		printf("\n=================================\n");
 
-		bubbleSort(a, n);
+		quickSort(a, n);
 		printf(" Отсортированный массив :  \n");
 
 		for (i = 0; i < n; ++i)
@@ -124,6 +126,92 @@ void directSort(double* a, int n) //прямой выбор (наивный)
 		}
 	}
 }
+
+void quickSort(double* a, int n)// быстрой сортировки
+{
+	if (n <= 1)
+	{
+		return;
+	}
+	else if (n == 2)
+	{
+		if (a[0] > a[1])
+		{
+			swap(&(a[0]), &(a[1]));
+		}
+		return;
+	}
+// ИНВАРИАНТ ЦИКЛА
+//Отрезки массива а(0) - a(beg - 1) и а(beg+k) - a(n-1) отсортированы;
+// beg - начало неотсортированного отрезка длинной k;
+// ИНВАРИАНТ a[beg-1] <= a[i] <= a[beg+k];
+
+	int beg = 0;
+	int k = n;
+
+	while (k > 1)
+	{
+		// выбираем медиану
+		int m = k / 2;
+		partition(a + beg, k, &m);
+		int left = m;
+		int right = k - 1 - left;
+
+		if (left <= right)
+		{
+			quickSort(a + m + beg, left);
+			beg += left + 1;
+			k -= left + 1;
+		}
+		else // right <= left;
+		{
+			quickSort(a + beg + k, right);
+			// beg остается прежним
+			k -= right + 1;
+		}
+	}
+}
+
+void partition(double* a, int n, int* m)
+{
+	//сначала перемещаем медиану в начало массива
+	if (*m != 0)
+		swap(&(a[0]), &(a[*m]));
+	double x = a[0];
+	//иннвариант 
+	// a[0] == x - медиана
+	// a[1], a[2],...a[i] <= x
+	// a[j]....a[n-1] >= x
+	
+	int i = 0; int j = n;
+
+	while (j - i > 1)
+	{
+		bool changed = false;
+		if (a[i+1]< x)
+		{
+			++i; changed = true;
+		}
+		if (j - 1 > i && a[j - 1] >= x)
+		{
+			--j; changed = true;
+		}
+		if (!changed)
+		{
+			//assert(j - i > 1 && a[i + 1] > x && a[j - 1] < x);
+			++i, --j;
+			swap(&(a[i]), &(a[j]));
+		}
+	}
+	if (i > 0)
+	{
+		swap(&(a[0]), &(a[i])); 
+	}
+	*m = i;
+
+}
+
+
 
 
 bool binSearch(double* a, int n, double x, int* idx)
