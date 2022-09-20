@@ -7,13 +7,17 @@
 
 //Ѕыстра€ соритировка
 
-void swap(double* x, double* y);
+bool binSearch(double* a, int n, double x, int* idx);
+void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx);
+void copyArray (double* b, double* a, int n);
+void mergeSort(double* a, int n);
+void merge(const double* a, int n, const double* b, int m, double* c);
+//void heapSort(double* a, int n);
+//void sieve (double *a, int n, int i);
 //void bubbleSort(double* a, int n);
 //void partition(double* a, int n, int* m);
 //void quickSort(double* a, int n);
-bool binSearch(double* a, int n, double x, int* idx);
-void heapSort(double* a, int n);
-void sieve (double *a, int n, int i);
+void swap(double* x, double* y);
 
 int main()
 {
@@ -39,13 +43,13 @@ int main()
 		printf("\n »меетс€ массив  :\n");
 		for (i = 0; i < n; ++i)
 		{
-			printf("  %6.1lf  ", a[i]);
+			printf("  %4.1lf  ", a[i]);
 			if ((i + 1) % 10 == 0)
 				printf("\n");
 		}
 		printf("\n=================================\n");
 
-		heapSort(a, n);
+		mergeSort(a, n);
 		printf(" ќтсортированный массив :  \n");
 
 		for (i = 0; i < n; ++i)
@@ -135,6 +139,96 @@ bool binSearch(double* a, int n, double x, int* idx)
 	}
 }
 
+void mergeSort(double* a, int n)
+{
+	if (n <= 1)
+		return;
+	
+	double* b = new double [n];
+	int arrayIdx;
+	mergeSortRecursvely(a, n, b, &arrayIdx);
+
+	if (arrayIdx == 0)
+		copyArray(b, a, n);
+	delete[]b;
+}
+
+void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx)
+{
+	*arrayIdx = 0;
+	if (n <= 1)
+		return;
+	if (n == 2)
+	{
+		if (a[0] > a[1])
+		{
+			swap(&(a[0]), &(a[1]));
+		}
+		return;
+	}
+	assert(n > 2);
+
+	int k = n / 2; //разбиваем массив на 2 части, л - начало второй половины.
+
+	int res0, res1; //результат сортировки либо в массив аб либо в массив b
+
+	mergeSortRecursvely(a, k, b, &res0);
+	mergeSortRecursvely(a+k, n-k, b+k, &res1);
+	if (res0 != res1)
+	{
+		if (res0 == 0)
+		{
+			copyArray(b + k, a + k, n - k);
+		}
+		else
+		{
+			copyArray(a + k, b + k, n - k);
+		}
+	}
+	if (res0 == 0)
+	{
+		merge(a, k, a + k, n - k, b);
+	}
+	else
+	{
+		merge(b, k, b + k, n - k, a);
+	}
+	*arrayIdx = res0;
+}
+
+void copyArray(double* b, double* a, int n )
+{
+	for (int i = 0; i < n; ++i)
+		a[i] = b[i];
+}
+
+void merge(const double* a, int n, const double* b,  int m, double* c)
+{
+	int i = 0; 
+	int j = 0;
+	int k = 0;
+	while (i < n && j < m)
+	{
+		if (a[i] <= b[j])
+		{
+			c[k] = a[i]; ++i;
+		}
+		else
+		{
+			c[k] = b[j]; ++j;
+		}
+		++k;
+	}
+	while (i < n)
+	{
+		c[k] = a[i]; ++i; ++k;
+	}
+	while (j < m)
+	{
+		c[k] = b[j]; ++j; ++k;
+	}
+}
+/*
 void heapSort(double* a, int n)
 {
 	//I-ый этап, построение пирамиды
@@ -173,7 +267,6 @@ void sieve(double* a, int n, int i)
 	}
 }
 
-/*
 void bubbleSort(double* a, int n) //оптимизаци€ пузырьковой сортировки (наивный)
 {
 	bool inverse = true;
