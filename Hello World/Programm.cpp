@@ -5,13 +5,14 @@
 #include <math.h> 
 #include <cassert>
 
-//Быстрая соритировка
+
 
 bool binSearch(double* a, int n, double x, int* idx);
-void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx);
+//void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx);
+void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* arroyIdx);
 void copyArray (double* b, double* a, int n);
 void mergeSort(double* a, int n);
-void merge(const double* a, int n, const double* b, int m, double* c);
+void merge(double* a, int n,double* b, int m, double* c);
 //void heapSort(double* a, int n);
 //void sieve (double *a, int n, int i);
 //void bubbleSort(double* a, int n);
@@ -146,18 +147,22 @@ void mergeSort(double* a, int n)
 	
 	double* b = new double [n];
 	int arrayIdx;
-	mergeSortRecursvely(a, n, b, &arrayIdx);
+	int res0; int res1; //результат сортировки либо в массиве а либо в массиве b
+	res0 = 0; res1 = 0;
+	mergeSortRecursvely(a, n, b, res0, res1, &arrayIdx);
 
-	if (arrayIdx == 0)
-		copyArray(b, a, n);
-	delete[]b;
+	if (arrayIdx != 0)
+	copyArray(b, a, n);
+	delete[] b;
 }
 
-void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx)
+
+void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* arrayIdx)
 {
 	*arrayIdx = 0;
 	if (n <= 1)
 		return;
+	
 	if (n == 2)
 	{
 		if (a[0] > a[1])
@@ -166,17 +171,22 @@ void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx)
 		}
 		return;
 	}
-	assert(n > 2);
 
-	int k = n / 2; //разбиваем массив на 2 части, л - начало второй половины.
+	//assert(n > 2);
 
-	int res0, res1; //результат сортировки либо в массив аб либо в массив b
+	int k = n / 2; //разбиваем массив на 2 части, k - начало второй половины.
 
-	mergeSortRecursvely(a, k, b, &res0);
-	mergeSortRecursvely(a+k, n-k, b+k, &res1);
-	if (res0 != res1)
+	//int res0=0; int res1 = 0; //результат сортировки либо в массиве а либо в массиве b
+
+	mergeSortRecursvely(a, k, b, res0, res1, &res0);
+	++res0;
+
+	mergeSortRecursvely(a+k, n-k, b+k, res0, res1, &res1);
+	++res1;
+
+	if (res0 % 2 != res1 % 2)
 	{
-		if (res0 == 0)
+		if (res0 % 2 != 0)
 		{
 			copyArray(b + k, a + k, n - k);
 		}
@@ -185,7 +195,7 @@ void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx)
 			copyArray(a + k, b + k, n - k);
 		}
 	}
-	if (res0 == 0)
+	if (res0%2 != 0)
 	{
 		merge(a, k, a + k, n - k, b);
 	}
@@ -193,16 +203,17 @@ void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx)
 	{
 		merge(b, k, b + k, n - k, a);
 	}
-	*arrayIdx = res0;
+	*arrayIdx = res0 % 2;
 }
 
-void copyArray(double* b, double* a, int n )
+
+void copyArray(double* b, double* a, int n)
 {
 	for (int i = 0; i < n; ++i)
 		a[i] = b[i];
 }
 
-void merge(const double* a, int n, const double* b,  int m, double* c)
+void merge(double* a, int n, double* b,  int m, double* c)
 {
 	int i = 0; 
 	int j = 0;
