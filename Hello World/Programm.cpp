@@ -9,10 +9,12 @@
 
 bool binSearch(double* a, int n, double x, int* idx);
 //void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx);
-void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* arroyIdx);
+//void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* arroyIdx);
 void copyArray (double* b, double* a, int n);
-void mergeSort(double* a, int n);
-void merge(double* a, int n,double* b, int m, double* c);
+//void mergeSort(double* a, int n);
+//void merge(double* a, int n,double* b, int m, double* c);
+void swapBlocks(double* a, int len0, int len1);
+void mergeBlocks(double* a, int len0, int len1);
 //void heapSort(double* a, int n);
 //void sieve (double *a, int n, int i);
 //void bubbleSort(double* a, int n);
@@ -26,7 +28,7 @@ int main()
 	int n, i;
 	double* a = NULL;
 
-	printf("\n ÏÐÎÃÐÀÌÌÀ ÑÎÐÒÈÐÎÂÊÈ ÝËÅÌÅÍÒÎÂ ÌÀÑÑÈÂÀ ÌÅÒÎÄÎÌ ÑËÈßÍÈß (íèñõîäÿùàÿ äâóõñòîðîííÿÿ ðåêóðñèâíàÿ) \n\n");
+	printf("\n ÏÐÎÃÐÀÌÌÀ ÑÎÐÒÈÐÎÂÊÈ ÝËÅÌÅÍÒÎÂ ÌÀÑÑÈÂÀ ÌÅÒÎÄÎÌ ÑËÈßÍÈß (áåç äîïîëíèòåëüíîé ïàìÿòè) \n\n");
 
 	while (true)
 	{
@@ -140,7 +142,7 @@ bool binSearch(double* a, int n, double x, int* idx)
 		return (x >= a[end]);
 	}
 }
-
+/*
 void mergeSort(double* a, int n)
 {
 	if (n <= 1)
@@ -186,7 +188,7 @@ void mergeSort(double* a, int n)
 		copyArray(b, a, n);
 	delete[] b;
 
-
+	
 
 	/*
 	int arrayIdx;
@@ -197,10 +199,83 @@ void mergeSort(double* a, int n)
 	if (arrayIdx != 0)
 	copyArray(b, a, n);
 	delete[] b;
-	*/
+	
+}
+*/
+void mergeBlocks(double* a, int len0, int len1)
+{
+	if (len0 <= 0 || len1 <= 0)
+		return;
+	int n = len0 + len1;
+	if (len0 == 1)
+	{
+		int k = findUpper(a + 1, len1, a[0]);
+		int i = 0; 
+		while (i < k)
+		{
+			swap(&(a[i]), &a[i + 1]);
+			++i;
+		}
+		return;
+	}
+	else
+	{
+		if (len1 == 1) // Àíàëîãè÷íî?????????? ÍÅÏÎÍßÒÍÎ
+		{
+			int k = findUpper(a + 1, len1, a[0]);
+			int i = 0;
+			while (i < k)
+			{
+				swap(&(a[i]), &a[i + 1]);
+				++i;
+			}
+			return;
+		}
+	}
+	assert(len0 > 1 && len1 > 1);
+	int c0, c1;
+	if (len0 >= len1)
+	{
+		c0 = len0 / 2;
+		c1 = findUpper(a + len0, len1, a[c0]);
+		swapBlocks(a + c0, len0 - c0, c1);
+	}
+	else
+	{
+		c1 = len1 / 2;
+		c0 = findLower(a, len0, a[len0+c1]) +1;
+		swapBlocks(a + c0, len0 - c0, c1);
+	}
+
+	mergeBlocks(a, c0, c1);
+	mergeBlocks(a + c0 +c1, len0 - c0, len1- c1);
+
+
 }
 
 
+
+void swapBlocks(double* a, int len0, int len1)
+{
+	if (len0 <= 0 || len1 <= 0)
+		return;
+	reverseArray(a, len0);
+	reverseArray(a + len0, len1);
+	reverseArray(a, len0 + len1);
+}
+
+void reverseArray(double* a, int n)
+{
+	int i = 0;
+	int j = n - 1;
+	while (i < j)
+	{
+		swap(&(a[i]), &a[j]);
+		++i; --j;
+	}
+}
+
+/*
 void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* arrayIdx)
 {
 	*arrayIdx = 0;
@@ -242,7 +317,7 @@ void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* a
 	}
 	*arrayIdx = res0 % 2;
 }
-
+*/
 
 void copyArray(double* b, double* a, int n)
 {
@@ -250,7 +325,8 @@ void copyArray(double* b, double* a, int n)
 		a[i] = b[i];
 }
 
-void merge(double* a, int n, double* b,  int m, double* c)
+/*
+void merge(double* a, int n, double* b, int m, double* c)
 {
 	int i = 0; 
 	int j = 0;
@@ -276,6 +352,7 @@ void merge(double* a, int n, double* b,  int m, double* c)
 		c[k] = b[j]; ++j; ++k;
 	}
 }
+*/
 /*
 void heapSort(double* a, int n)
 {
