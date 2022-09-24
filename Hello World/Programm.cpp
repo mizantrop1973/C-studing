@@ -26,7 +26,7 @@ int main()
 	int n, i;
 	double* a = NULL;
 
-	printf("\n ПРОГРАММА СОРТИРОВКИ ЭЛЕМЕНТОВ МАССИВА МЕТОДОМ КУЧИ (ПИРАМИДЫ) \n\n");
+	printf("\n ПРОГРАММА СОРТИРОВКИ ЭЛЕМЕНТОВ МАССИВА МЕТОДОМ СЛИЯНИЯ (нисходящая двухсторонняя рекурсивная) \n\n");
 
 	while (true)
 	{
@@ -130,6 +130,7 @@ bool binSearch(double* a, int n, double x, int* idx)
 			else
 			{
 				// assert a[c] == x; - сравнивать вещественные числа некорректно
+				
 				*idx = c;
 				return true;
 			}
@@ -144,8 +145,50 @@ void mergeSort(double* a, int n)
 {
 	if (n <= 1)
 		return;
-	
-	double* b = new double [n];
+	if (n == 2)
+	{
+		if (a[0] > a[1])
+		{
+			swap(&(a[0]), &(a[1]));
+		}
+		return;
+	}
+	double* b = new double[n];
+
+	double* src = a;
+	double* dst = b;
+	int len = 1;
+
+	while (len < n)
+	{
+		//Инвариант массив src  разбит на пары подмассивов длины len (последний может быть меньше)
+		// каждый подмассив упорядочен
+		int i = 0; //индекс начала пары подмассивов
+		while (i < n - len)
+		{
+			int len2 = len;
+			if (i + len + len2 > n)
+			{
+				len2 = n - (i + len);
+			}
+			merge(src + i, len, src + i + len, len2, dst + i);
+			i += len + len2;
+		}
+		if (i < n)
+			copyArray(src + i, dst + i, n - i);
+		len *= 2;
+		//меняем местами источник и получатель
+		double* tmp = src;
+		src = dst;
+		dst = tmp;
+	}
+	if (src != a)
+		copyArray(b, a, n);
+	delete[] b;
+
+
+
+	/*
 	int arrayIdx;
 	int res0; int res1; //результат сортировки либо в массиве а либо в массиве b
 	res0 = 0; res1 = 0;
@@ -154,6 +197,7 @@ void mergeSort(double* a, int n)
 	if (arrayIdx != 0)
 	copyArray(b, a, n);
 	delete[] b;
+	*/
 }
 
 
@@ -163,14 +207,7 @@ void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* a
 	if (n <= 1)
 		return;
 	
-	if (n == 2)
-	{
-		if (a[0] > a[1])
-		{
-			swap(&(a[0]), &(a[1]));
-		}
-		return;
-	}
+	
 
 	//assert(n > 2);
 
