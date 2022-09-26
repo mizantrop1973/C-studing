@@ -98,6 +98,56 @@ void swap(double* x, double* y)
 }
 
 
+bool binSearch(double* a, int n, double x, int* idx) //сортировка с поиском последнего элемента
+{
+	bool found = false;
+	if (n <= 0 || x <= a[0])
+	{
+		*idx = 0;
+		return (n > 0 && x >= a[0]); // (трюк - x = a[0}
+	}
+	else if (x > a[n - 1])
+	{
+		*idx = n;
+		return false;
+	}
+	else
+	{
+		assert(n > 0 && x > a[0] && x <= a[n - 1]);
+		int beg = 0;
+		int end = n - 1;
+		assert(a[beg] < x && x <= a[end]);
+		while (end - beg > 1)
+		{
+			int c = (end + beg) / 2;
+			assert(beg < c&& c < end);
+			if (a[c] < x)
+			{
+				beg = c;
+			}
+			else if (a[c] > x)
+			{
+				end = c;
+			}
+			else
+			{
+				// assert a[c] == x; - сравнивать вещественные числа некорректно
+				while (a[c+1] <= a[c] && c+1 < n)
+				{
+					++c;
+				}
+				
+				*idx = c;
+				return true;
+				
+			}
+		}
+		assert(a[beg] < x && x <= a[end]);
+		*idx = end;
+		return (x >= a[end]);
+	}
+}
+/*
 bool binSearch(double* a, int n, double x, int* idx)
 {
 	bool found = false;
@@ -129,20 +179,20 @@ bool binSearch(double* a, int n, double x, int* idx)
 			{
 				end = c;
 			}
-			/*else
+			else
 			{
 				// assert a[c] == x; - сравнивать вещественные числа некорректно
-				
+
 				*idx = c;
 				return true;
-			}*/
+			}
 		}
 		assert(a[beg] < x && x <= a[end]);
 		*idx = end;
 		return (x >= a[end]);
 	}
 }
-
+*/
 void mergeSort(double* a, int n)
 {
 	if (n <= 1)
