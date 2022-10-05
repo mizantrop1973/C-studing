@@ -5,9 +5,8 @@
 #include <math.h> 
 #include <cassert>
 
-
-
-bool binSearch(double* a, int n, double x, int* idx);
+bool binSearchLow(double* a, int n, double x, int* idx);
+bool binSearchLow(double* a, int n, double x, int* idx);
 //void mergeSortRecursvely(double* a, int n, double* b, int* arrayIdx);
 //void mergeSortRecursvely(double* a, int n, double* b, int res0, int res1, int* arroyIdx);
 void copyArray (double* b, double* a, int n);
@@ -269,12 +268,12 @@ void mergeBlocks(double* a, int len0, int len1)
 	{
 		if (len1 == 1) // Аналогично?????????? НЕПОНЯТНО
 		{
-			int k = findUpper(a + 1, len1, a[0]);
-			int i = 0;
-			while (i < k)
+			int k = findUpper(a, len0, a[n-1]);
+			int i = n-1;
+			while (i > k)
 			{
-				swap(&(a[i]), &a[i + 1]);
-				++i;
+				swap(&(a[i]), &a[i - 1]);
+				--i;
 			}
 			return;
 		}
