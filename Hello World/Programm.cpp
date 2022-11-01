@@ -7,16 +7,15 @@
 
 
 
-// Сдвиг элементов массива вправо на одну позицию
+// Циклический сдвиг элементов массива на К позиций вправо (инвертирование блоков)
 
-// два варианта:
-//1) входной массив содержит на первом месте число элементов массива, а потом идут элементы массива
-//2) входной файл содержит только элементы массива
+// два способв
+// 1) инвертируем левый блок n-k , инвертируем правый блок k, инвертируем весь массив длинны n
 
-//rewind(f)  - перемотка файла на начало
-//fseek(f, 0, SEEK_SET) - смещение на (второй аргумент) от начала файла  (SEEK_SET, SEEK_CUR, SEEK_END)
+void reverse(int* a, int n);
+void shiftk(int* a, int n, int k);
 
-void shift(int* a, int n);
+
 
 int main()
 
@@ -56,8 +55,12 @@ int main()
 	fclose(in);
 
 	assert(n == m && n > 0);
+	int k;
+	printf("Enter the number of shift positions k:");
+	scanf("%d", &k);
 
-	shift(a, n);
+
+	shiftk(a, n, k);
 
 	//выдаем результат
 	FILE* out = fopen("C:/Users/Дмитрий/Documents/output.txt", "w");
@@ -80,15 +83,27 @@ int main()
 	return 0;
 }
 
-void shift(int* a, int n)
-{
-	if (n <= 0)
-		return;
-	int last = a[n - 1];
+void shiftk(int* a, int n, int k)
+{	
+	reverse(a, n - k);// скорость работы (n - k)/2 
+	reverse(a + n - k, k); //скорость работы n/2 
+	reverse(a, n); //скорость работы  n/2 
+	// ВСЕГО примерно n перестановок (обменов)
+}
 
-	for (int i = n - 1; i > 0; --i)
+void reverse(int* a, int n)
+{
+	if (n <= 1)
+		return;
+	int i = 0; int j = n - 1;
+
+	while (i < j)
 	{
-		a[i] = a[i - 1];
+		int tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+		++i; --j;
+
+		// каждый обмен влечет три операции копирования, итого 3n
 	}
-	a[0] = last;
 }
