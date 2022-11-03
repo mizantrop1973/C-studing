@@ -7,13 +7,14 @@
 
 
 
-// Циклический сдвиг элементов массива на К позиций вправо (инвертирование блоков)
+// Циклический сдвиг элементов массива на К позиций вправо (разбиение на орбиты)
 
-// два способв
-// 1) инвертируем левый блок n-k , инвертируем правый блок k, инвертируем весь массив длинны n
+// 
+// 2) разбиваем на орбиты (перестановка первого элемента на k позиций вдоль всего массива) ,
+//    число циклов d = НОД (k, n)
 
-void reverse(int* a, int n);
 void shiftk(int* a, int n, int k);
+int gcd(int m, int n);
 
 
 
@@ -33,7 +34,7 @@ int main()
 	{
 		++n;
 	}
-	printf("Array has %d elements \n", n);
+	printf("\n  Array has %d elements \n", n);
 	if (n <= 0)
 	{
 		fprintf(stderr, "epmty input file \n");
@@ -56,7 +57,7 @@ int main()
 
 	assert(n == m && n > 0);
 	int k;
-	printf("Enter the number of shift positions k:");
+	printf("  Enter the number of shift positions k: ");
 	scanf("%d", &k);
 
 
@@ -72,7 +73,7 @@ int main()
 
 	for (int i = 0; i < n; ++i)
 	{
-		fprintf(out, "%d", a[i]);
+		fprintf(out, " %d", a[i]);
 		if ((i+1)%10==0)
 		{
 			fprintf(out, "\n");
@@ -85,25 +86,43 @@ int main()
 
 void shiftk(int* a, int n, int k)
 {	
-	reverse(a, n - k);// скорость работы (n - k)/2 
-	reverse(a + n - k, k); //скорость работы n/2 
-	reverse(a, n); //скорость работы  n/2 
-	// ВСЕГО примерно n перестановок (обменов)
+	k %= n; // остаток от деления на n - справедливо как для k > n, так и для k < n;
+	if (k == 0)
+		return;
+	int nod = gcd(n, k);
+	int i = 0;
+	while (i < nod)
+	{
+		// проходим орбиту элемента i
+		int x = a[i]; // начальный элемент орбиты
+		int j = i + k;
+		if (j >= n)
+			j -= n;
+		while (j != i)    //число операций копирования  - 3 для каждого элемента орбиты, всего  n
+		{				  //всего n элементов каждой орбиты, то есть 3n копирований
+			int y = a[j];
+			a[j] = x;
+			x = y;
+			j += k;
+			if (j >= n)
+				j -= n;
+		}
+		a[i] = x;
+
+		++i; // переходим к следующей орбите
+	}
 }
 
-void reverse(int* a, int n)
+int gcd(int m, int n)
 {
-	if (n <= 1)
-		return;
-	int i = 0; int j = n - 1;
+	int a = m;
+	int b = n;
 
-	while (i < j)
+	while (b != 0)
 	{
-		int tmp = a[i];
-		a[i] = a[j];
-		a[j] = tmp;
-		++i; --j;
-
-		// каждый обмен влечет три операции копирования, итого 3n
+		int r = a % b;
+		a = b; b = r;
 	}
+	//Утверждение n=0 и НОД (m,n)=НОД(m0,n0)
+	return a;
 }
