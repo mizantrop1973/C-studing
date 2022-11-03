@@ -9,17 +9,16 @@
 
 // ”даление повтор€ющихс€ элементов
 
-// решение 1 —ортируем элементы массива по возрастанию, находим повторы, выбрасываем их
-//           врем€ работы O(nlogn) (сортировка) + линейное врем€ сравнени€
-//    
+// решение 2 »спользуем алгоритм бинарного поиска и метод бинарных вставок
+//  ћожет работать дольше в хукдшем случае n^2
 
-void elementsSet(int* a, int n, int* m);
+void elementsSet2(int* a, int n, int* m);
 
 //¬спомогательные функции
+bool binSearch(int* a, int n, int x, int* idx);
 void swap(int* x, int* y);
 void heapSort(int* a, int n);
 void sieve(int* a, int n, int i);
-
 
 
 
@@ -66,7 +65,7 @@ int main()
 //	scanf("%d", &k);
 
 
-	elementsSet(a, n, &m);
+	elementsSet2(a, n, &m);
 
 	//выдаем результат
 	FILE* out = fopen("C:/Users/ƒмитрий/Documents/output.txt", "w");
@@ -90,17 +89,22 @@ int main()
 }
 
 //ќ—Ќќ¬Ќјя ‘”Ќ ÷»я
-void elementsSet(int* a, int n, int* m)
+void elementsSet2(int* a, int n, int* m)
 {
-	heapSort(a, n);
-	int k = 0; // количество различных элементов в просмотренной части массива
+	int k = 0;
 	for (int i = 0; i < n; ++i)
 	{
-		if (k == 0 || a[i] > a[k - 1])
+		int x = a[i];
+		int idx;
+		if (!binSearch(a, k, x, &idx))
+			//добавл€ем x  к массиву значений
+			// 1. создаем место, дл€ этого сдвигаем конец отрезка a0 - a(k-1) вправо
+			//    начина€ с индекса idx
 		{
-			if (i > k)
-				a[k] = a[i];
-			++k;
+			for (int j = k; j > idx; --j)
+				a[j] = a[j - 1];
+			a[idx] = x;
+			++k;			
 		}
 	}
 	*m = k;
@@ -108,6 +112,50 @@ void elementsSet(int* a, int n, int* m)
 
 
 // ¬—ѕќћќ√ј“≈Ћ№Ќџ≈ ‘”Ќ ÷»»
+bool binSearch(int* a, int n, int x, int* idx)
+{
+	bool found = false;
+	if (n <= 0 || x <= a[0])
+	{
+		*idx = 0;
+		return (n > 0 && x >= a[0]); // (трюк - x = a[0}
+	}
+	else if (x > a[n - 1])
+	{
+		*idx = n;
+		return false;
+	}
+	else
+	{
+		assert(n > 0 && x >= a[0] && x <= a[n - 1]);
+		int beg = 0;
+		int end = n - 1;
+		assert(a[beg] < x && x <= a[end]);
+		while (end - beg > 1)
+		{
+			int c = (end + beg) / 2;
+			assert(beg < c&& c < end);
+			if (a[c] < x)
+			{
+				beg = c;
+			}
+			else if (a[c] > x)
+			{
+				end = c;
+			}
+			else
+			{
+				// assert a[c] == x; - сравнивать вещественные числа некорректно
+				*idx = c;
+				return true;
+			}
+		}
+		assert(a[beg] < x && x <= a[end]);
+		*idx = end;
+		return (x >= a[end]);
+	}
+}
+/*
 void swap(int* x, int* y)
 {
 	int tmp = *x;
@@ -153,3 +201,4 @@ void sieve(int* a, int n, int i)
 		i = s; //переходим вниз по дереву
 	}
 }
+*/
