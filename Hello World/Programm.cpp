@@ -7,14 +7,19 @@
 
 
 
-// Циклический сдвиг элементов массива на К позиций вправо (разбиение на орбиты)
+// Удаление повторяющихся элементов
 
-// 
-// 2) разбиваем на орбиты (перестановка первого элемента на k позиций вдоль всего массива) ,
-//    число циклов d = НОД (k, n)
+// решение 1 Сортируем элементы массива по возрастанию, находим повторы, выбрасываем их
+//           время работы O(nlogn) (сортировка) + линейное время сравнения
+//    
 
-void shiftk(int* a, int n, int k);
-int gcd(int m, int n);
+void elementsSet(int* a, int n, int* m);
+
+//Вспомогательные функции
+void swap(int* x, int* y);
+void heapSort(int* a, int n);
+void sieve(int* a, int n, int i);
+
 
 
 
@@ -57,11 +62,11 @@ int main()
 
 	assert(n == m && n > 0);
 	int k;
-	printf("  Enter the number of shift positions k: ");
-	scanf("%d", &k);
+//	printf("  Enter the number of shift positions k: ");
+//	scanf("%d", &k);
 
 
-	shiftk(a, n, k);
+	elementsSet(a, n, &m);
 
 	//выдаем результат
 	FILE* out = fopen("C:/Users/Дмитрий/Documents/output.txt", "w");
@@ -71,7 +76,7 @@ int main()
 		return(-1);
 	}
 
-	for (int i = 0; i < n; ++i)
+	for (int i = 0; i < m; ++i)
 	{
 		fprintf(out, " %d", a[i]);
 		if ((i+1)%10==0)
@@ -84,45 +89,67 @@ int main()
 	return 0;
 }
 
-void shiftk(int* a, int n, int k)
-{	
-	k %= n; // остаток от деления на n - справедливо как для k > n, так и для k < n;
-	if (k == 0)
-		return;
-	int nod = gcd(n, k);
-	int i = 0;
-	while (i < nod)
+//ОСНОВНАЯ ФУНКЦИЯ
+void elementsSet(int* a, int n, int* m)
+{
+	heapSort(a, n);
+	int k = 0; // количество различных элементов в просмотренной части массива
+	for (int i = 0; i < n; ++i)
 	{
-		// проходим орбиту элемента i
-		int x = a[i]; // начальный элемент орбиты
-		int j = i + k;
-		if (j >= n)
-			j -= n;
-		while (j != i)    //число операций копирования  - 3 для каждого элемента орбиты, всего  n
-		{				  //всего n элементов каждой орбиты, то есть 3n копирований
-			int y = a[j];
-			a[j] = x;
-			x = y;
-			j += k;
-			if (j >= n)
-				j -= n;
+		if (k == 0 || a[i] > a[k - 1])
+		{
+			if (i > k)
+				a[k] = a[i];
+			++k;
 		}
-		a[i] = x;
+	}
+	*m = k;
+}
 
-		++i; // переходим к следующей орбите
+
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+void swap(int* x, int* y)
+{
+	int tmp = *x;
+	*x = *y;
+	*y = tmp;
+}
+
+
+void heapSort(int* a, int n)
+{
+	//I-ый этап, построение пирамиды
+	int k = n / 2;   // у  k нет детей (2k +1 == n+1 > n-1)
+	while (k > 0)
+	{
+		--k;
+		sieve(a, n, k); // Просеивание снизу справа - по окончанию будет построена ПИРАМИДА
+	}
+
+	// II-ой этап . Сортировка по пирамиде
+	k = n;
+	while (k > 1)
+	{
+		--k;
+		swap(&(a[0]), &(a[k]));
+		sieve(a, k, 0);
 	}
 }
 
-int gcd(int m, int n)
+void sieve(int* a, int n, int i)
 {
-	int a = m;
-	int b = n;
-
-	while (b != 0)
+	while (true)
 	{
-		int r = a % b;
-		a = b; b = r;
+		int s0 = 2 * i + 1;
+		if (s0 >= n)
+			break;
+		int s1 = s0 + 1;
+		int s = s0;
+		if (s1<n && a[s1]> a[s0])
+			s = s1;
+		if (a[i] >= a[s])
+			break;
+		swap(&(a[i]), &(a[s]));
+		i = s; //переходим вниз по дереву
 	}
-	//Утверждение n=0 и НОД (m,n)=НОД(m0,n0)
-	return a;
 }
