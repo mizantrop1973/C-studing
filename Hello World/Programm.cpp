@@ -7,198 +7,58 @@
 
 
 
-// Удаление повторяющихся элементов
+// Получаем биномиальные коэффициенты
 
-// решение 2 Используем алгоритм бинарного поиска и метод бинарных вставок
-//  Может работать дольше в хукдшем случае n^2
+// 
+//  
 
-void elementsSet2(int* a, int n, int* m);
-
-//Вспомогательные функции
-bool binSearch(int* a, int n, int x, int* idx);
-void swap(int* x, int* y);
-void heapSort(int* a, int n);
-void sieve(int* a, int n, int i);
-
+void binom(int* a, int n);
 
 
 int main()
 
 {
-	FILE* in = fopen("C:/Users/Дмитрий/Documents/input.txt", "r");
-	if (in == NULL)
+	int* a = NULL;
+	while (true)
 	{
-		perror("Can not open file");
-		return (-1);
+		int n;
+		printf("  n: ");
+		if (scanf("%d", &n) < 1 || n == 0)
+			break;
+		delete[] a;
+		a = new int[n + 1];
+
+		binom(a, n);
+
+		for (int i = 0; i <= n; ++i)
+
+			printf("  %d", a[i]);
+		printf("\n");
+
 	}
-	int n = 0;
-	int x;
-
-	while (fscanf(in, "%d", &x) == 1)
-	{
-		++n;
-	}
-	printf("\n  Array has %d elements \n", n);
-	if (n <= 0)
-	{
-		fprintf(stderr, "epmty input file \n");
-	}
-
-	rewind(in);
-
-	int* a = new int [n];
-	int m = 0;
-	while (m < n)
-	{
-		if (fscanf(in, "%d", &x) < 1)
-		{
-			perror("read error");
-			return(-1);
-		}
-		a[m] = x; ++m;
-	}
-	fclose(in);
-
-	assert(n == m && n > 0);
-	int k;
-//	printf("  Enter the number of shift positions k: ");
-//	scanf("%d", &k);
-
-
-	elementsSet2(a, n, &m);
-
-	//выдаем результат
-	FILE* out = fopen("C:/Users/Дмитрий/Documents/output.txt", "w");
-	if (out == NULL)
-	{
-		perror("cannot open output file");
-		return(-1);
-	}
-
-	for (int i = 0; i < m; ++i)
-	{
-		fprintf(out, " %d", a[i]);
-		if ((i+1)%10==0)
-		{
-			fprintf(out, "\n");
-		}
-	}
-
-	fclose(out);
-	return 0;
 }
 
 //ОСНОВНАЯ ФУНКЦИЯ
-void elementsSet2(int* a, int n, int* m)
+void binom(int* a, int n)
 {
-	int k = 0;
-	for (int i = 0; i < n; ++i)
+	a[0] = 1; //   с(0;0)
+	for (int k = 1; k <= n; ++k) //вычисляем коэффициенты с(k;i)
 	{
-		int x = a[i];
-		int idx;
-		if (!binSearch(a, k, x, &idx))
-			//добавляем x  к массиву значений
-			// 1. создаем место, для этого сдвигаем конец отрезка a0 - a(k-1) вправо
-			//    начиная с индекса idx
+		int prev = 0;
+		for (int i = 0; i <= k; ++i)
 		{
-			for (int j = k; j > idx; --j)
-				a[j] = a[j - 1];
-			a[idx] = x;
-			++k;			
-		}
-	}
-	*m = k;
-}
-
-
-// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-bool binSearch(int* a, int n, int x, int* idx)
-{
-	bool found = false;
-	if (n <= 0 || x <= a[0])
-	{
-		*idx = 0;
-		return (n > 0 && x >= a[0]); // (трюк - x = a[0}
-	}
-	else if (x > a[n - 1])
-	{
-		*idx = n;
-		return false;
-	}
-	else
-	{
-		assert(n > 0 && x >= a[0] && x <= a[n - 1]);
-		int beg = 0;
-		int end = n - 1;
-		assert(a[beg] < x && x <= a[end]);
-		while (end - beg > 1)
-		{
-			int c = (end + beg) / 2;
-			assert(beg < c&& c < end);
-			if (a[c] < x)
+			int tmp = a[i];
+			if (i < k)
 			{
-				beg = c;
-			}
-			else if (a[c] > x)
-			{
-				end = c;
+				a[i] += prev;
+				prev = tmp;
 			}
 			else
 			{
-				// assert a[c] == x; - сравнивать вещественные числа некорректно
-				*idx = c;
-				return true;
+				a[i] = prev;
 			}
 		}
-		assert(a[beg] < x && x <= a[end]);
-		*idx = end;
-		return (x >= a[end]);
-	}
-}
-/*
-void swap(int* x, int* y)
-{
-	int tmp = *x;
-	*x = *y;
-	*y = tmp;
-}
-
-
-void heapSort(int* a, int n)
-{
-	//I-ый этап, построение пирамиды
-	int k = n / 2;   // у  k нет детей (2k +1 == n+1 > n-1)
-	while (k > 0)
-	{
-		--k;
-		sieve(a, n, k); // Просеивание снизу справа - по окончанию будет построена ПИРАМИДА
-	}
-
-	// II-ой этап . Сортировка по пирамиде
-	k = n;
-	while (k > 1)
-	{
-		--k;
-		swap(&(a[0]), &(a[k]));
-		sieve(a, k, 0);
 	}
 }
 
-void sieve(int* a, int n, int i)
-{
-	while (true)
-	{
-		int s0 = 2 * i + 1;
-		if (s0 >= n)
-			break;
-		int s1 = s0 + 1;
-		int s = s0;
-		if (s1<n && a[s1]> a[s0])
-			s = s1;
-		if (a[i] >= a[s])
-			break;
-		swap(&(a[i]), &(a[s]));
-		i = s; //переходим вниз по дереву
-	}
-}
-*/
+
