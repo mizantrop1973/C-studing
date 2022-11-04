@@ -36,13 +36,16 @@ int main()
 		printf("\n");
 
 	}
+	
+	delete[] a;
+	return 0;
 }
 
 //ќ—Ќќ¬Ќјя ‘”Ќ ÷»я
 void binom(int* a, int n)
 {
 	a[0] = 1; //   с(0;0)
-	for (int k = 1; k <= n; ++k) //вычисл€ем коэффициенты с(k;i)
+	for (int k = 1; k <= n; ++k) //вычисл€ем коэффициенты с(k;i) треугольник паскал€
 	{
 		int prev = 0;
 		for (int i = 0; i <= k; ++i)
