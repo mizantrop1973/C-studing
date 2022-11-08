@@ -7,61 +7,72 @@
 
 
 
-// ѕолучаем биномиальные коэффициенты
+// запись числа X  в двоичной и шестнадцатиричной форме
 
 // 
 //  
 
-void binom(int* a, int n);
-
-
+void binary(int n0, char* t);
+void hexadecimal(int n0, char* t1);
+const char HEXDIGITS[17] = "0123456789abcdef";
+const char BINARYDIGITS[4] = "01";
 int main()
 
 {
-	int* a = NULL;
+	char t[128];
+	char t1[32];
+	int n0;
+	printf("  Writing the number N in binary and hexadecimal form \n\n");
+
 	while (true)
 	{
-		int n;
-		printf("  n: ");
-		if (scanf("%d", &n) < 1 || n == 0)
+		printf("  Enter N: ");
+		int res = scanf("%d", &n0);
+		if (res <= 0 || n0 == 0)
 			break;
-		delete[] a;
-		a = new int[n + 1];
 
-		binom(a, n);
+		binary(n0, t);
+		printf("  binary form of N = %d is  %s \n\n", n0, &t);
+		
 
-		for (int i = 0; i <= n; ++i)
-
-			printf("  %d", a[i]);
-		printf("\n");
+		hexadecimal(n0, t1);
+		printf("  hexadecimal form of N = %d is  %s \n\n\n", n0, &t1);
+		printf("  New representation\n\n");
 
 	}
-	
-	delete[] a;
-	return 0;
 }
 
-//ќ—Ќќ¬Ќјя ‘”Ќ ÷»я
-void binom(int* a, int n)
+//BINARY REPRESENTATION
+void binary(int n0, char* t)
 {
-	a[0] = 1; //   с(0;0)
-	for (int k = 1; k <= n; ++k) //вычисл€ем коэффициенты с(k;i) треугольник паскал€
+	int n = n0;
+	
+	int i = sizeof(int) * 8;
+	t[i] = 0;
+	
+	while (i > 0)
 	{
-		int prev = 0;
-		for (int i = 0; i <= k; ++i)
-		{
-			int tmp = a[i];
-			if (i < k)
-			{
-				a[i] += prev;
-				prev = tmp;
-			}
-			else
-			{
-				a[i] = prev;
-			}
-		}
+		--i;
+		int d = (n & 1);
+		n >>= 1;
+		t[i] = BINARYDIGITS[d];
 	}
 }
 
+//HEXADECIMAL REPRESENTATION
+void hexadecimal(int n0, char* t1)
 
+{
+	int n = n0;
+	
+	int i = sizeof(int)*2;
+	t1[i] = 0;
+		while (i > 0)
+	{
+		--i;
+		int d = (n & 0xf);
+		n >>= 4;
+		t1[i] = HEXDIGITS[d];
+		
+	}
+}
